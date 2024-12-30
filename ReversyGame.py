@@ -48,7 +48,7 @@ if __name__ == "__main__":
     if game_type == '1':
         game.game_types.play_game1()
     elif game_type == '2':
-        game.game_types.play_game2()
+        game.game_types.play_game2new()
     elif game_type == '3':
         game.game_types.play_game3()
     else:
