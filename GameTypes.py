@@ -7,30 +7,26 @@ class GameTypes:
     def play_game1(self):
         while True:
             new_cell_black = self.algorithms.play_each_other('black')
-            self.actions.flip_the_cell('black', new_cell_black)
+            self.actions.flip_the_cell('black', new_cell_black,0)
             self.view.print_board()
             new_cell_white = self.algorithms.play_each_other('white')
-            self.actions.flip_the_cell('white', new_cell_white)
+            self.actions.flip_the_cell('white', new_cell_white,0)
             self.view.print_board()
-            future_moves_for_white = self.actions.future_moves('white')
-            print(f"Future moves for white: {future_moves_for_white}")
     
     def play_game2(self):
         while True:
-            # Black player
             new_cell_black = self.algorithms.play_each_other('black')
             if new_cell_black is None:
                 print("No valid moves for black. Turn skipped.")
             else:   
-                self.actions.flip_the_cell('black', new_cell_black)
+                self.actions.flip_the_cell('black', new_cell_black,0)
                 self.view.print_board()
 
-            # White player
             new_cell_white = self.algorithms.select_random('white')
             if new_cell_white is None:
                 print("No valid moves for white. Turn skipped.")
             else:
-                self.actions.flip_the_cell('white', new_cell_white)
+                self.actions.flip_the_cell('white', new_cell_white,0)
                 self.view.print_board()
 
             # Check for end of game
@@ -53,7 +49,7 @@ class GameTypes:
 
             if black_moves:
                 new_cell_black = self.algorithms.select_random('black')
-                self.actions.flip_the_cell('black', new_cell_black)
+                self.actions.flip_the_cell('black', new_cell_black,0)
                 self.view.print_board()
 
             else:
@@ -61,7 +57,7 @@ class GameTypes:
 
             if white_moves:
                 new_cell_white = self.algorithms.select_random('white')
-                self.actions.flip_the_cell('white', new_cell_white)
+                self.actions.flip_the_cell('white', new_cell_white,0)
                 self.view.print_board()
             else:
                 print("No available moves for white. Turn skipped.")
@@ -94,7 +90,7 @@ class GameTypes:
                 if new_cell_black is None:
                     print("No valid moves for black. Turn skipped.")
                 else:
-                    self.actions.flip_the_cell('black', new_cell_black)
+                    self.actions.flip_the_cell('black', new_cell_black,0)
                     self.view.print_board()
 
                 # White player (bot)
@@ -102,7 +98,7 @@ class GameTypes:
                 if new_cell_white is None:
                     print("No valid moves for white. Turn skipped.")
                 else:
-                    self.actions.flip_the_cell('white', new_cell_white)
+                    self.actions.flip_the_cell('white', new_cell_white,0)
                     self.view.print_board()
 
                 # Check for end of game
@@ -113,4 +109,4 @@ class GameTypes:
                     self.actions.count_pieces()
                     break
 
-            
+    

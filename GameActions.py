@@ -1,3 +1,4 @@
+
 class GameActions:
     def __init__(self, board):
         self.board = board
@@ -34,8 +35,9 @@ class GameActions:
                             y += dy
         return list(set(available_moves))
     
-    def flip_the_cell(self, color,new_cell):
-        self.previous_board = [row[:] for row in self.board]
+    def flip_the_cell(self, color,new_cell, future):
+        if future==1:
+            self.previous_board = [row[:] for row in self.board]
         available_moves = self.set_the_available_move(color)
         x_new, y_new = new_cell      
         if not available_moves:
@@ -97,7 +99,7 @@ class GameActions:
         future_moves_map = {}
 
         for new_cell in available_moves:
-            self.flip_the_cell(color, new_cell)
+            self.flip_the_cell(color, new_cell,1)
             number_of_cells = self.count_numbers(color)
             opponent_available_moves = self.set_the_available_move(opponent_color)
 
