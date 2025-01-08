@@ -3,7 +3,7 @@ from GameView import GameView
 from GameActions import GameActions
 from Algorithms import Algorithms
 from GameTypes import GameTypes
-
+from GamePlayTree import GamePlayTree
 
 class ReversyGame:
     def __init__(self):
@@ -16,6 +16,7 @@ class ReversyGame:
         self.actions = GameActions(self.board)
         self.algorithms = Algorithms(self.actions)
         self.game_types = GameTypes(self.actions, self.algorithms, self.view)
+        self.game_tree = GamePlayTree(board=self.board)  # İlk root node'u oluştur.
 
     
 
@@ -44,7 +45,7 @@ class ReversyGame:
 if __name__ == "__main__":
     game = ReversyGame()
     game_type = game.start_game()
-    game.view.print_board()
+    game.actions.print_board()
     if game_type == '1':
         game.game_types.play_game1()
     elif game_type == '2':

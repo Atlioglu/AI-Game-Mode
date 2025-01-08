@@ -1,1 +1,1 @@
-board
+view

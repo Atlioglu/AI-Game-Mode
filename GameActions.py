@@ -36,8 +36,11 @@ class GameActions:
         return list(set(available_moves))
     
     def flip_the_cell(self, color,new_cell, future):
+        temp_board = [row[:] for row in self.board]
         if future==1:
-            self.previous_board = [row[:] for row in self.board]
+            board_act = temp_board
+        else:
+            board_act = self.board
         available_moves = self.set_the_available_move(color)
         x_new, y_new = new_cell      
         if not available_moves:
@@ -54,7 +57,7 @@ class GameActions:
                 print("Invalid input. Please enter the row and column as two numbers separated by a comma, or 'q' to quit.")
         
 
-        self.board[x_new][y_new] = color
+        board_act[x_new][y_new] = color
         opponent_color = 'white' if color == 'black' else 'black'
         directions = [
             (0, 1), (0, -1), (1, 0), (-1, 0),
@@ -66,17 +69,18 @@ class GameActions:
             cells_to_flip = []
 
             while self.is_valid_position(x, y):
-                if self.board[x][y] == opponent_color:
+                if board_act[x][y] == opponent_color:
                     cells_to_flip.append((x, y))
-                elif self.board[x][y] == color:
+                elif board_act[x][y] == color:
                     for cx, cy in cells_to_flip:
-                        self.board[cx][cy] = color
+                        board_act[cx][cy] = color
                     break
                 else:
                     break
 
                 x += dx
                 y += dy
+            
 
     def count_pieces(self):
         black_count = sum(row.count('black') for row in self.board)
@@ -99,6 +103,7 @@ class GameActions:
         future_moves_map = {}
 
         for new_cell in available_moves:
+            
             self.flip_the_cell(color, new_cell,1)
             number_of_cells = self.count_numbers(color)
             opponent_available_moves = self.set_the_available_move(opponent_color)
@@ -107,8 +112,7 @@ class GameActions:
                 "number_of_cells": number_of_cells,
                 "opponent_available_moves": opponent_available_moves
             }
-
-            self.undo()
+            #self.undo()
 
         return future_moves_map
 
@@ -117,10 +121,61 @@ class GameActions:
         return count
     
     def undo(self):
-        """
-        Son yapılan hamleyi geri alır ve tahtayı önceki duruma döndürür.
-        """
+        
         self.board = [row[:] for row in self.previous_board]
-    
 
+
+    def print_board(self):
+        for row in self.board:
+            display_row = []
+            for cell in row:
+                if cell == 'white':
+                    display_row.append('W') 
+                elif cell == 'black':
+                    display_row.append('\033[1;31mO\033[0m') 
+                else:
+                    display_row.append('_')
+            print(' '.join(display_row))
+
+
+    
+    def update_tree(self, root, color, depth_limit=3):
+        """
+        Ağacı günceller ve belirtilen depth_limit'e kadar çocuk düğümleri oluşturur.
+        Args:
+            root (GamePlayTree): Başlangıç root düğümü.
+            color (str): Oynayan oyuncunun rengi ('black' veya 'white').
+            depth_limit (int): Ağacın oluşturulacağı maksimum derinlik.
+        Returns:
+            GamePlayTree: Güncellenmiş root düğümü.
+        """
+        def create_children(node, current_depth, current_color):
+            if current_depth >= depth_limit:
+                return
+
+            # Mevcut düğüm için geçerli hamleleri al
+            available_moves = self.set_the_available_move(current_color)
+            opponent_color = 'white' if current_color == 'black' else 'black'
+
+            for move in available_moves:
+                # Yeni tahtayı hesapla
+                new_board = [row[:] for row in node.board]  # Mevcut düğümün tahtasını kopyala
+                self.board = new_board
+                self.flip_the_cell(current_color, move, future=1)
+
+                # Yeni bir child düğümü oluştur
+                child_node = GamePlayTree(
+                    parent=node,
+                    depth=current_depth + 1,
+                    board=[row[:] for row in self.board],  # Yeni tahtayı kopyala
+                    opponent_available_moves=self.set_the_available_move(opponent_color)
+                )
+                node.add_child(child_node)
+
+                # Çocuk için aynı işlemi uygula
+                create_children(child_node, current_depth + 1, opponent_color)
+
+        # Root'tan başla ve çocukları oluştur
+        create_children(root, root.depth, color)
+        return root
 
