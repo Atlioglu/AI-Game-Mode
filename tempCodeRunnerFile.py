@@ -1,1 +1,1 @@
-view
+select_the_best_move_with_edges
